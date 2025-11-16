@@ -37,6 +37,8 @@ Research VPS providers that offer:
 
 **Enterprise Options:** For mission-critical deployments, consider premium providers like Hetzner, OVHcloud, or AWS Lightsail, which offer enhanced SLAs, advanced monitoring, and enterprise support (at higher cost).
 
+**Note:** We build these advanced monitoring features for our scope in this tutorial!
+
 **Need help choosing a provider?** Olaf Klein from monkeytower internet agency can provide personalized recommendations based on your specific needs. Visit [www.monkeytower.net](https://www.monkeytower.net) for VPS setup assistance.
 
 ### Key Factors to Consider
