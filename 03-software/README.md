@@ -37,8 +37,7 @@ sudo apt install -y \
   build-essential \
   software-properties-common \
   nano \
-  vim \
-  neovim
+  vim
 ```
 
 **What each tool does:**
@@ -51,32 +50,8 @@ sudo apt install -y \
 - `software-properties-common` - Manage software repositories
 - `nano` - Simple, user-friendly text editor
 - `vim` - Powerful text editor with advanced features
-- `neovim` - Modern version of vim with additional features
 
 ## 3.2 Development Tools
-
-### Neovim (Modern Text Editor)
-
-**Install Neovim:**
-```bash
-sudo apt install -y neovim
-```
-
-**Configure Neovim:**
-```bash
-mkdir -p ~/.config/nvim
-cat > ~/.config/nvim/init.vim << 'EOF'
-syntax on
-set number
-set relativenumber
-set tabstop=2
-set shiftwidth=2
-set expandtab
-set smartindent
-set ignorecase
-set smartcase
-EOF
-```
 
 ### Nushell (Modern Shell)
 
@@ -263,9 +238,6 @@ Your server now has a complete development environment! You've installed:
 
 **Test your setup:**
 ```bash
-# Test Neovim
-nvim --version
-
 # Test Nushell
 nu --version
 
@@ -279,7 +251,6 @@ bat --version
 
 ## 📚 Additional Resources
 
-- [Neovim Documentation](https://neovim.io/doc/)
 - [Nushell Book](https://www.nushell.sh/book/)
 - [GitHub CLI Manual](https://cli.github.com/manual/)
 - [Tmux Cheat Sheet](https://tmuxcheatsheet.com/)

@@ -31,10 +31,15 @@ By the end of this chapter, you'll understand:
 ### Podman vs Docker
 
 **Why Podman for this tutorial:**
-- **Rootless by default:** Better security
-- **Daemonless:** No background service required
-- **Docker compatibility:** Same commands and images
-- **Systemd integration:** Better for servers
+
+Many tutorials and guides use Docker for containerization, but this tutorial specifically uses **Podman** for several important reasons (detailed in the video link below). While you might be familiar with Docker from other projects, Podman offers significant advantages for server deployments:
+
+- **Rootless by default:** Enhanced security without requiring root privileges
+- **Daemonless architecture:** No background service that could be a security risk or point of failure
+- **Docker compatibility:** Same commands and images work seamlessly
+- **Better systemd integration:** More suitable for long-running server services
+
+**Note:** If you're more comfortable with Docker, you can adapt these commands, but we recommend Podman for the security and stability benefits outlined in the comparison video.
 
 ## 4.2 Install Podman
 
