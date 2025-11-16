@@ -27,7 +27,7 @@ If you don't have a domain yet, you'll need to register one. Popular registrars 
 - Porkbun
 - Google Domains
 
-**Need help with domain registration?** Olaf Klein from monkeytower internet agency can assist with domain setup and DNS configuration. Visit [monkeytower.net](https://monkeytower.net) for professional domain services.
+**Need help with domain registration?** Olaf Klein from monkeytower internet agency can assist with domain setup and DNS configuration. Visit [www.monkeytower.net](https://www.monkeytower.net) for professional domain services.
 
 ## 5.2 Domain Name Setup
 

@@ -84,7 +84,7 @@ Found an issue or want to improve this tutorial? The source is available on GitH
 
 For personalized help with VPS setup, N8N configuration, or server management:
 - **Website:** [www.olaf-klein.de](https://www.olaf-klein.de)
-- **Agency:** [monkeytower.net](https://monkeytower.net)
+- **Agency:** [www.monkeytower.net](https://www.monkeytower.net)
 
 If you need assistance with specific VPS providers, domain setup, or advanced N8N workflows, feel free to reach out!
 
