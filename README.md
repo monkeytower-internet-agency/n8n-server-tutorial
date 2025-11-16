@@ -60,6 +60,12 @@ This tutorial teaches you how to build a professional automation server with:
 - GitHub integration
 - Collaboration workflows
 
+### [Bonus: Contributing to the Tutorial](./bonus-contributing/README.md)
+- Understanding GitHub Issues
+- Creating effective bug reports and feature requests
+- Contributing to open source documentation
+- Community collaboration best practices
+
 ## 🚀 Quick Start
 
 If you're new to server administration, start with [Chapter 1](./01-planning/README.md) and follow each chapter in order.
@@ -79,6 +85,10 @@ By the end of this tutorial, you'll have:
 - Professional domain with SSL
 - Smart notifications for system events
 - Version-controlled server configuration
+
+## 📝 About This Tutorial
+
+**This entire tutorial was developed during the setup of my own N8N production server and is continuously being expanded and improved.** Every chapter, script, and configuration has been tested and refined through real-world implementation. As I discover better practices and encounter new challenges, this tutorial grows with those learnings.
 
 ## 🤝 Contributing
 
