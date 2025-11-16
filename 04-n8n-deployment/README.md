@@ -314,7 +314,6 @@ Your N8N automation server is now running! You've successfully:
 
 ## 📚 Additional Resources
 
-- [N8N Docker Installation](https://docs.n8n.io/hosting/installation/docker/)
 - [Podman Getting Started](https://podman.io/get-started/)
 - [Podman vs Docker: Why Choose Podman?](https://youtu.be/Z5uBcczJxUY?si=d9-fZvz7opnyRuYs) - Learn about Podman's advantages: daemonless architecture, rootless containers by default, enhanced security, and Docker compatibility
 - [N8N Configuration](https://docs.n8n.io/hosting/configuration/)
