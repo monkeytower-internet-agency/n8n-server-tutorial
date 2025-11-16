@@ -257,4 +257,4 @@ bat --version
 
 ---
 
-**Next:** [Chapter 4: N8N Deployment →](./../04-n8n-deployment/README.md)
+**Next:** [Chapter 5: N8N Deployment →](./../05-n8n-deployment/README.md)

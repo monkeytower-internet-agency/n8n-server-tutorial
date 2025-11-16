@@ -350,4 +350,4 @@ Your N8N server now has a professional domain and SSL security! You've accomplis
 
 ---
 
-**Next:** [Chapter 6: Backup System →](./../06-backup-system/README.md)
+**Next:** [Chapter 7: Backup System →](./../07-backup-system/README.md)

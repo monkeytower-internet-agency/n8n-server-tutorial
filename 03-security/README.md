@@ -252,4 +252,4 @@ Your server now has enterprise-grade security! You've implemented:
 
 ---
 
-**Next:** [Chapter 3: Software Installation →](./../03-software/README.md)
+**Next:** [Chapter 4: Software Installation →](./../04-software/README.md)

@@ -355,4 +355,4 @@ crontab -l
 
 ---
 
-**Next:** [Chapter 7: Notification System →](./../07-notifications/README.md)
+**Next:** [Chapter 8: Notification System →](./../08-notifications/README.md)

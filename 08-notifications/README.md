@@ -299,4 +299,4 @@ curl -X POST -H 'Content-Type: application/json' "$(cat ~/.google_chat_webhook)"
 
 ---
 
-**Next:** [Chapter 8: Git Repository Setup →](./../08-git-setup/README.md)
+**Next:** [Chapter 9: Git Repository Setup →](./../09-git-setup/README.md)

@@ -326,4 +326,4 @@ Your N8N automation server is now running! You've successfully:
 
 ---
 
-**Next:** [Chapter 5: Domain & HTTPS →](./../05-domain-https/README.md)
+**Next:** [Chapter 6: Domain & HTTPS →](./../06-domain-https/README.md)

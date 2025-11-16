@@ -14,49 +14,55 @@ This tutorial teaches you how to build a professional automation server with:
 
 ## 📚 Tutorial Structure
 
-### [1. Planning Your N8N Server](./01-planning/README.md)
+### [1. Ubuntu Server Installation](./01-ubuntu-install/README.md)
+- Clean Ubuntu Server LTS setup
+- Drive partitioning and storage configuration
+- Network setup and remote access
+- Post-installation system preparation
+
+### [2. Planning Your N8N Server](./02-planning/README.md)
 - Choosing the right VPS provider
 - Server specifications and costs
 - Operating system selection
 
-### [2. Security Setup](./02-security/README.md)
+### [3. Security Setup](./03-security/README.md)
 - SSH key authentication
 - User management and sudo configuration
 - Firewall and security hardening
 
-### [3. Software Installation](./03-software/README.md)
+### [4. Software Installation](./04-software/README.md)
 - Essential development tools
 - Version control setup
 - Productivity enhancements
 
-### [4. N8N Deployment](./04-n8n-deployment/README.md)
+### [5. N8N Deployment](./05-n8n-deployment/README.md)
 - Container setup with Podman
 - Persistent data configuration
 - Service management
 
-### [5. Domain & HTTPS](./05-domain-https/README.md)
+### [6. Domain & HTTPS](./06-domain-https/README.md)
 - DNS configuration
 - SSL certificate setup
 - Reverse proxy configuration
 
-### [6. Backup System](./06-backup-system/README.md)
+### [7. Backup System](./07-backup-system/README.md)
 - Automated file backups
 - FTP server integration
 - Smart rotation policies
 
-### [7. Notification System](./07-notifications/README.md)
+### [8. Notification System](./08-notifications/README.md)
 - Google Messages integration
 - Smart alert routing
 - User mention configuration
 
-### [8. Git Repository Setup](./08-git-setup/README.md)
+### [9. Git Repository Setup](./09-git-setup/README.md)
 - Version control for server files
 - GitHub integration
 - Collaboration workflows
 
 ## 🚀 Quick Start
 
-If you're new to server administration, start with [Chapter 1](./01-planning/README.md) and follow each chapter in order.
+If you're new to server administration, start with [Chapter 1](./01-ubuntu-install/README.md) and follow each chapter in order.
 
 ## 📋 Prerequisites
 
