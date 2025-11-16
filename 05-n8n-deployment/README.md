@@ -66,53 +66,73 @@ podman info
 
 ## 4.3 N8N Container Setup
 
-### Create Data Directory
+### Create Quadlet Service
 
-**Create persistent storage:**
+**Modern Podman integration uses Quadlet files instead of manual systemd services.** Quadlet automatically generates proper systemd units with correct dependencies.
+
+**Create Quadlet directory:**
 ```bash
-mkdir -p ~/.n8n-data
+sudo mkdir -p /etc/containers/systemd
 ```
 
-**Set proper permissions:**
+**Create N8N Quadlet file:**
 ```bash
-chmod 755 ~/.n8n-data
+sudo nano /etc/containers/systemd/n8n.container
 ```
 
-### Run N8N Container
+**Add this content:**
+```ini
+[Unit]
+Description=N8N automation server
 
-**Basic N8N deployment:**
-```bash
-podman run -d \
-  --name n8n \
-  -p 5678:5678 \
-  -v ~/.n8n-data:/home/node/.n8n \
-  --user 1000:1000 \
-  docker.io/n8nio/n8n
+[Container]
+Image=docker.io/n8nio/n8n
+PublishPort=5678:5678
+Volume=%h/.n8n-data:/home/node/.n8n
+User=%U
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=default.target
 ```
 
-**Command explanation:**
-- `-d` - Run in background (detached)
-- `--name n8n` - Container name for management
-- `-p 5678:5678` - Map port 5678 on host to container
-- `-v ~/.n8n-data:/home/node/.n8n` - Mount persistent data
-- `--user 1000:1000` - Run as regular user for security
-- `docker.io/n8nio/n8n` - Official N8N image
+**Save and exit** (Ctrl+X, Y, Enter)
+
+### Enable and Start Service
+
+**Reload systemd to recognize the new Quadlet:**
+```bash
+sudo systemctl daemon-reload
+```
+
+**Enable auto-start on boot and start immediately:**
+```bash
+sudo systemctl enable --now n8n.service
+```
+
+**Check service status:**
+```bash
+sudo systemctl status n8n.service
+```
 
 ### Verify Deployment
 
-**Check if container is running:**
+**Check if Quadlet service is running:**
+```bash
+sudo systemctl status n8n.service
+```
+
+**View generated systemd logs:**
+```bash
+sudo journalctl -u n8n.service -f
+```
+
+**Check Podman container status:**
 ```bash
 podman ps
-```
-
-**View container logs:**
-```bash
-podman logs n8n
-```
-
-**Check container resource usage:**
-```bash
-podman stats n8n
 ```
 
 ## 4.4 Access N8N
@@ -136,28 +156,33 @@ http://your-server-ip:5678
 - **Password:** (set during setup)
 - **URL:** `http://your-server-ip:5678`
 
-## 4.5 Container Management
+## 4.5 Service Management
 
-### Basic Commands
+### Systemd Commands
 
-**Stop N8N:**
+**Stop N8N service:**
 ```bash
-podman stop n8n
+sudo systemctl stop n8n.service
 ```
 
-**Start N8N:**
+**Start N8N service:**
 ```bash
-podman start n8n
+sudo systemctl start n8n.service
 ```
 
-**Restart N8N:**
+**Restart N8N service:**
 ```bash
-podman restart n8n
+sudo systemctl restart n8n.service
 ```
 
-**Remove container:**
+**Check service status:**
 ```bash
-podman rm n8n
+sudo systemctl status n8n.service
+```
+
+**View service logs:**
+```bash
+sudo journalctl -u n8n.service -f
 ```
 
 ### Update N8N
@@ -167,11 +192,14 @@ podman rm n8n
 podman pull docker.io/n8nio/n8n
 ```
 
-**Update running container:**
+**Restart service (Quadlet handles container recreation):**
 ```bash
-podman stop n8n
-podman rm n8n
-# Re-run the deployment command above
+sudo systemctl restart n8n.service
+```
+
+**Verify update:**
+```bash
+sudo journalctl -u n8n.service -n 20
 ```
 
 ## 4.6 Persistent Data Management
@@ -216,32 +244,58 @@ tar -xzf n8n-data.tar.gz
 # Check what's using port 5678
 sudo netstat -tulpn | grep 5678
 
-# Kill process or change port
-podman run -d --name n8n -p 5679:5678 docker.io/n8nio/n8n
+# Change port in Quadlet file and restart
+sudo nano /etc/containers/systemd/n8n.container
+# Change PublishPort=5678:5678 to PublishPort=5679:5678
+sudo systemctl daemon-reload
+sudo systemctl restart n8n.service
 ```
 
 **Permission errors:**
 ```bash
 # Fix data directory permissions
 chmod 755 ~/.n8n-data
-podman run -d --name n8n -p 5678:5678 -v ~/.n8n-data:/home/node/.n8n --user $(id -u):$(id -g) docker.io/n8nio/n8n
+
+# Check systemd service logs for permission issues
+sudo journalctl -u n8n.service -n 50
+
+# Restart service after fixing permissions
+sudo systemctl restart n8n.service
 ```
 
-**Container won't start:**
+**Service won't start:**
 ```bash
-# Check logs for errors
-podman logs n8n
+# Check systemd service logs for errors
+sudo journalctl -u n8n.service -n 50
 
-# Remove and redeploy
-podman rm n8n
-# Re-run deployment command
+# Check Podman container status
+podman ps -a
+
+# Restart service
+sudo systemctl restart n8n.service
+
+# If issues persist, recreate Quadlet
+sudo systemctl stop n8n.service
+sudo systemctl disable n8n.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now n8n.service
 ```
 
 ### Performance Monitoring
 
-**Monitor resource usage:**
+**Monitor service status:**
 ```bash
-podman stats n8n
+sudo systemctl status n8n.service
+```
+
+**Monitor container resource usage:**
+```bash
+podman stats
+```
+
+**View real-time logs:**
+```bash
+sudo journalctl -u n8n.service -f
 ```
 
 **Check system resources:**
@@ -278,9 +332,11 @@ podman run -d \
 
 ## 4.9 Deployment Checklist
 
-### Container Setup
+### Quadlet Service Setup
 - [ ] Podman installed and working
-- [ ] N8N container running
+- [ ] Quadlet directory created (/etc/containers/systemd)
+- [ ] N8N Quadlet file created (n8n.container)
+- [ ] Systemd service enabled and running
 - [ ] Port 5678 accessible
 - [ ] Data persistence configured
 
@@ -288,11 +344,11 @@ podman run -d \
 - [ ] Web interface accessible
 - [ ] Admin account created
 - [ ] Basic authentication configured
-- [ ] Container running as non-root user
+- [ ] Container running as non-root user (%U in Quadlet)
 
-### Management
-- [ ] Container start/stop commands tested
-- [ ] Logs accessible
+### Service Management
+- [ ] Systemd start/stop/restart commands tested
+- [ ] Service logs accessible (journalctl)
 - [ ] Resource monitoring working
 - [ ] Backup strategy planned
 
