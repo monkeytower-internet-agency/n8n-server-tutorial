@@ -45,7 +45,7 @@ This tutorial teaches you how to build a professional automation server with:
 - Smart rotation policies
 
 ### [7. Notification System](./07-notifications/README.md)
-- Google Chat integration
+- Google Messages integration
 - Smart alert routing
 - User mention configuration
 
@@ -77,6 +77,16 @@ By the end of this tutorial, you'll have:
 ## 🤝 Contributing
 
 Found an issue or want to improve this tutorial? The source is available on GitHub. Feel free to submit pull requests or open issues.
+
+## 📞 Contact & Support
+
+**Author:** Olaf Klein - Owner of MonkeyTower Internet Agency
+
+For personalized help with VPS setup, N8N configuration, or server management:
+- **Website:** [www.olaf-klein.de](https://www.olaf-klein.de)
+- **Agency:** [monkeytower.net](https://monkeytower.net)
+
+If you need assistance with specific VPS providers, domain setup, or advanced N8N workflows, feel free to reach out!
 
 ## 📄 License
 

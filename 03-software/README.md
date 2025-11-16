@@ -35,7 +35,10 @@ sudo apt install -y \
   tree \
   git \
   build-essential \
-  software-properties-common
+  software-properties-common \
+  nano \
+  vim \
+  neovim
 ```
 
 **What each tool does:**
@@ -46,6 +49,9 @@ sudo apt install -y \
 - `git` - Version control system
 - `build-essential` - Compilation tools for software
 - `software-properties-common` - Manage software repositories
+- `nano` - Simple, user-friendly text editor
+- `vim` - Powerful text editor with advanced features
+- `neovim` - Modern version of vim with additional features
 
 ## 3.2 Development Tools
 

@@ -17,7 +17,19 @@ By the end of this chapter, you'll have:
 - N8N running on port 5678
 - Basic DNS knowledge
 
-## 5.1 Domain Name Setup
+## 5.1 Domain Name Registration
+
+### Getting a Domain Name
+
+If you don't have a domain yet, you'll need to register one. Popular registrars include:
+- Namecheap
+- Cloudflare
+- Porkbun
+- Google Domains
+
+**Need help with domain registration?** Olaf Klein from MonkeyTower Internet Agency can assist with domain setup and DNS configuration. Visit [monkeytower.net](https://monkeytower.net) for professional domain services.
+
+## 5.2 Domain Name Setup
 
 ### DNS Configuration
 

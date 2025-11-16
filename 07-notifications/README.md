@@ -1,11 +1,11 @@
 # Chapter 7: Notification System
 
-**Set up intelligent notifications for your N8N server using Google Chat. This chapter covers webhook configuration, smart alert routing, and user mention setup to keep you informed about critical system events.**
+**Set up intelligent notifications for your N8N server using Google Messages. This chapter covers webhook configuration, smart alert routing, and user mention setup to keep you informed about critical system events.**
 
 ## 🎯 What You'll Learn
 
 By the end of this chapter, you'll have:
-- Google Chat webhook integration
+- Google Messages webhook integration
 - Smart notification routing (normal vs critical)
 - User mention configuration for urgent alerts
 - Automated monitoring alerts
@@ -14,6 +14,7 @@ By the end of this chapter, you'll have:
 ## 📋 Prerequisites
 
 - Google Workspace account
+- Google Messages space for notifications
 - N8N server running
 - Basic webhook understanding
 - Google Chat access
