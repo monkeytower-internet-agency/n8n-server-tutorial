@@ -108,4 +108,4 @@ You now have a maintenance routine!
 - **Monthly:** Check for N8N version updates
 - **Quarterly:** Run `podman system prune` to reclaim space
 
-**Next:** [Bonus: Contributing to the Tutorial →](./../bonus-contributing/README.md)
+**Next:** [Chapter 11: AI-Assisted Maintenance →](./../11-ai-maintenance/README.md)

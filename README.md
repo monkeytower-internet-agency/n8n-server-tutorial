@@ -65,6 +65,16 @@ This tutorial teaches you how to build a professional automation server with:
 - N8N container updates
 - Cleanup and optimization
 
+### [11. AI-Assisted Maintenance](./11-ai-maintenance/README.md)
+- Opencode agent installation
+- Google Gemini integration
+- Automated slash commands
+
+### [12. Infrastructure as Code](./12-infrastructure-as-code/README.md)
+- Ansible automation basics
+- Server migration strategy
+- (Coming Soon)
+
 ### [Bonus: Contributing to the Tutorial](./bonus-contributing/README.md)
 - Understanding GitHub Issues
 - Creating effective bug reports and feature requests
