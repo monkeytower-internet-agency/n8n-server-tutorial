@@ -88,8 +88,8 @@ Description=N8N automation server
 [Container]
 Image=docker.io/n8nio/n8n
 PublishPort=5678:5678
-Volume=%h/.n8n-data:/home/node/.n8n
-User=%U
+Volume=/home/your-username/.n8n-data:/home/node/.n8n
+User=1000:1000
 
 [Service]
 Restart=always
@@ -98,6 +98,8 @@ TimeoutStartSec=900
 [Install]
 WantedBy=default.target
 ```
+
+**Important:** Replace `/home/your-username/.n8n-data` with the **absolute path** to your data directory (e.g., `/home/ok/.n8n-data`). Using shortcuts like `%h` works for user services but resolves to `/root` for system services, which causes failures.
 
 **Save and exit** (Ctrl+X, Y, Enter)
 
@@ -184,6 +186,11 @@ sudo systemctl status n8n.service
 ```bash
 sudo journalctl -u n8n.service -f
 ```
+
+**Did I lose my data?**
+When recreating containers (like we just did), you might worry about data loss. Because we use **persistent volumes** (mapped to `~/.n8n-data`), your workflows and credentials are safe. The container is just the "engine" - your data lives in the "fuel tank" (volume) which persists even when the engine is swapped.
+
+See [Container Concepts](https://docs.podman.io/en/latest/Introduction.html) for more details.
 
 ### Update N8N
 
