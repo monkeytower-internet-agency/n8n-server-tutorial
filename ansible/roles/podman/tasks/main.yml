@@ -1,0 +1,17 @@
+---
+- name: Install Podman
+  apt:
+    name: podman
+    state: present
+
+- name: Create containers system user
+  user:
+    name: "{{ service_user }}"
+    shell: /bin/bash
+    system: yes
+    create_home: yes
+
+- name: Enable linger for containers user
+  command: loginctl enable-linger {{ service_user }}
+  args:
+    creates: /var/lib/systemd/linger/{{ service_user }}

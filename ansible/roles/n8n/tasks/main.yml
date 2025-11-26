@@ -1,0 +1,52 @@
+---
+- name: Create Quadlet directory for user
+  file:
+    path: "/home/{{ service_user }}/.config/containers/systemd"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0755'
+
+- name: Create N8N data directory
+  file:
+    path: "/home/{{ service_user }}/data/n8n"
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    mode: '0755'
+
+- name: Deploy N8N Quadlet file
+  copy:
+    dest: "/home/{{ service_user }}/.config/containers/systemd/n8n.container"
+    content: |
+      [Unit]
+      Description=N8N automation server
+
+      [Container]
+      Image=docker.io/n8nio/n8n
+      PublishPort=5678:5678
+      Volume=%h/data/n8n:/home/node/.n8n:Z
+
+      [Service]
+      Restart=always
+      TimeoutStartSec=900
+
+      [Install]
+      WantedBy=default.target
+    owner: "{{ service_user }}"
+    group: "{{ service_user }}"
+    notify: Restart N8N
+
+- name: Ensure systemd user manager is running
+  become_user: "{{ service_user }}"
+  systemd:
+    daemon_reload: yes
+    scope: user
+
+- name: Enable and start N8N service
+  become_user: "{{ service_user }}"
+  systemd:
+    name: n8n
+    state: started
+    enabled: yes
+    scope: user

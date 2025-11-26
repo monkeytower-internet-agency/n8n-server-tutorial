@@ -1,0 +1,13 @@
+---
+- name: 🚀 Deploy N8N Server Infrastructure
+  hosts: n8n_servers
+  become: yes
+  vars:
+    user_name: ok
+    service_user: containers
+    n8n_domain: minin8n.monkeytower.net
+    
+  roles:
+    - common
+    - podman
+    - n8n
