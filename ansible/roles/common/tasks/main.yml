@@ -29,7 +29,89 @@
   args:
     creates: /root/.cargo/bin/nu
     executable: /bin/bash
-  # Note: This installs for root. Ideally we install for user 'ok' too.
+
+- name: Create config directories
+  file:
+    path: "/home/{{ user_name }}/.config/{{ item }}"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: '0755'
+  loop:
+    - nushell
+    - starship
+    - nvim
+
+- name: Configure Starship
+  copy:
+    dest: "/home/{{ user_name }}/.config/starship.toml"
+    content: |
+      add_newline = false
+      format = """$hostname$directory$character"""
+
+      [hostname]
+      ssh_only = false
+      format = "[$hostname]($style) "
+      style = "bold red"
+      disabled = false
+
+      [directory]
+      style = "blue"
+
+      [character]
+      success_symbol = "[➜](bold green)"
+      error_symbol = "[➜](bold red)"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+- name: Configure Nushell (env.nu)
+  copy:
+    dest: "/home/{{ user_name }}/.config/nushell/env.nu"
+    content: |
+      $env.STARSHIP_SHELL = "nu"
+
+      def create_left_prompt [] {
+          starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)'
+      }
+
+      $env.PROMPT_COMMAND = { || create_left_prompt }
+      $env.PROMPT_COMMAND_RIGHT = { || "" }
+
+      $env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/home/{{ user_name }}/.cargo/bin' | uniq)
+      $env.EDITOR = "nvim"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+- name: Configure Nushell (config.nu)
+  copy:
+    dest: "/home/{{ user_name }}/.config/nushell/config.nu"
+    content: |
+      $env.config = {
+          show_banner: false
+          ls: { use_ls_colors: true, clickable_links: true }
+          rm: { always_trash: false }
+          table: { mode: rounded }
+          edit_mode: vi
+      }
+      $env.config.color_config = {
+          separator: white
+          leading_trailing_space_bg: { attr: n }
+          header: green_bold
+          # ... simplified theme for Ansible demo
+      }
+      
+      # Aliases
+      alias l = ls --all
+      alias ll = ls -l
+      alias v = nvim
+      alias n8nctl = sudo -u containers bash -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u containers) && systemctl --user'
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+
+- name: Set Nushell as default shell
+  user:
+    name: "{{ user_name }}"
+    shell: /home/{{ user_name }}/.cargo/bin/nu
 
 - name: Configure Firewall (UFW)
   ufw:

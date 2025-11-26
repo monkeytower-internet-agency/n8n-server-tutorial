@@ -1,4 +1,4 @@
-# Chapter 3: Software Installation
+# Chapter 4: Software Installation
 
 **Install essential development tools and productivity software on your VPS. This chapter covers package management, development tools, and version control setup to create a powerful server environment.**
 
@@ -8,7 +8,7 @@ By the end of this chapter, you'll have installed:
 - Essential system utilities
 - Development tools (editors, compilers)
 - Version control systems
-- Productivity enhancements
+- Productivity enhancements (Nushell, Starship)
 - Package management best practices
 
 ## 📋 Prerequisites
@@ -17,7 +17,7 @@ By the end of this chapter, you'll have installed:
 - Sudo privileges for software installation
 - Internet connection for package downloads
 
-## 3.1 System Update and Essentials
+## 4.1 System Update and Essentials
 
 ### Update Package Lists
 
@@ -51,7 +51,7 @@ sudo apt install -y \
 - `nano` - Simple, user-friendly text editor
 - `vim` - Powerful text editor with advanced features
 
-## 3.2 Development Tools
+## 4.2 Development Tools
 
 ### Nushell (Modern Shell)
 
@@ -66,9 +66,58 @@ source "$HOME/.cargo/env"
 cargo install nu
 ```
 
+### Starship (Cross-Shell Prompt)
+
+**Install Starship:**
+```bash
+curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
+```
+
+**Configure Starship (Production Theme):**
+Create `~/.config/starship.toml` with a red hostname to warn you are on production:
+
+```toml
+add_newline = false
+format = """$hostname$directory$character"""
+
+[hostname]
+ssh_only = false
+format = "[$hostname]($style) "
+style = "bold red"
+disabled = false
+
+[directory]
+style = "blue"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+```
+
+**Enable Starship in Nushell:**
+Create or edit `~/.config/nushell/env.nu`:
+
+```nushell
+$env.STARSHIP_SHELL = "nu"
+
+def create_left_prompt [] {
+    starship prompt --cmd-duration $env.CMD_DURATION_MS $'--status=($env.LAST_EXIT_CODE)'
+}
+
+$env.PROMPT_COMMAND = { || create_left_prompt }
+$env.PROMPT_COMMAND_RIGHT = { || "" }
+
+$env.PATH = ($env.PATH | split row (char esep) | prepend '/usr/local/bin' | prepend '/home/ok/.cargo/bin' | uniq)
+$env.EDITOR = "nvim"
+```
+
 **Set Nushell as default shell:**
 ```bash
-echo "$HOME/.cargo/bin/nu" >> ~/.bashrc
+# Add nushell to /etc/shells if missing
+grep $(which nu) /etc/shells || echo "$HOME/.cargo/bin/nu" | sudo tee -a /etc/shells
+
+# Change default shell
+chsh -s $(which nu)
 ```
 
 ### GitHub CLI (gh)
@@ -85,7 +134,7 @@ sudo apt update
 sudo apt install -y gh
 ```
 
-## 3.3 Git Configuration
+## 4.3 Git Configuration
 
 ### Configure Git User Information
 
@@ -113,14 +162,7 @@ Host github.com
 EOF
 ```
 
-**Display public key for GitHub:**
-```bash
-cat ~/.ssh/github_key.pub
-```
-
-Add this key to your GitHub account under Settings → SSH and GPG keys.
-
-## 3.4 Development Environment Setup
+## 4.4 Development Environment Setup
 
 ### Install Additional Development Tools
 
@@ -135,125 +177,64 @@ sudo apt install -y \
   zip
 ```
 
-### Configure Python
+### Install Neovim
 
 ```bash
-python3 --version
-pip3 --version
+sudo apt install -y neovim
 ```
 
-### Configure Node.js
-
-```bash
-node --version
-npm --version
+**Minimal Config (`~/.config/nvim/init.vim`):**
+```vim
+syntax on
+set number
+set relativenumber
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set smartindent
+set ignorecase
+set smartcase
+set termguicolors
+colorscheme default
 ```
 
-## 3.5 Productivity Enhancements
-
-### Install Useful Utilities
-
-```bash
-sudo apt install -y \
-  tmux \
-  screen \
-  ncdu \
-  duf \
-  bat \
-  exa
-```
-
-**Tool descriptions:**
-- `tmux` - Terminal multiplexer for session management
-- `screen` - Alternative terminal multiplexer
-- `ncdu` - Disk usage analyzer
-- `duf` - Modern disk usage utility
-- `bat` - Enhanced cat command with syntax highlighting
-- `exa` - Modern ls replacement
-
-### Configure Aliases
-
-```bash
-cat >> ~/.bashrc << 'EOF'
-# Useful aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-
-# Enhanced commands
-if command -v bat &> /dev/null; then
-    alias cat='bat'
-fi
-
-if command -v exa &> /dev/null; then
-    alias ls='exa'
-    alias ll='exa -al'
-    alias la='exa -a'
-    alias tree='exa --tree'
-fi
-EOF
-```
-
-## 3.6 Software Installation Checklist
+## 4.5 Software Installation Checklist
 
 ### Core System Tools
 - [ ] Essential utilities installed
 - [ ] System updated
 - [ ] Build tools available
 
+### Shell Environment
+- [ ] Nushell installed
+- [ ] Starship installed and configured
+- [ ] Default shell changed to Nushell
+- [ ] Prompt shows red hostname (Production warning)
+
 ### Development Environment
 - [ ] Neovim installed and configured
-- [ ] Nushell installed and configured
 - [ ] GitHub CLI installed
 - [ ] Git configured with user information
-
-### Programming Languages
-- [ ] Python 3 installed
-- [ ] Node.js installed
-- [ ] Package managers working
-
-### Productivity Tools
-- [ ] Terminal multiplexers installed
-- [ ] Enhanced file utilities installed
-- [ ] Useful aliases configured
-
-### Version Control
-- [ ] Git user configured
-- [ ] SSH keys generated (optional)
-- [ ] GitHub CLI authenticated (optional)
+- [ ] Python/Node.js installed
 
 ## 🏁 Chapter Summary
 
 Your server now has a complete development environment! You've installed:
 - Essential system utilities and build tools
-- Modern development editors and shells
+- Modern shell (Nushell) with custom prompt (Starship)
 - Version control and GitHub integration
 - Programming languages and package managers
-- Productivity enhancements and aliases
 
 **Test your setup:**
-```bash
-# Test Nushell
-nu --version
-
-# Test GitHub CLI
-gh --version
-
-# Test enhanced commands
-ll
-bat --version
-```
+1.  Log out and log back in.
+2.  Verify your prompt shows the red hostname.
+3.  Try running `nu` commands like `ls | sort-by size`.
 
 ## 📚 Additional Resources
 
 - [Nushell Book](https://www.nushell.sh/book/)
+- [Starship Documentation](https://starship.rs/guide/)
 - [GitHub CLI Manual](https://cli.github.com/manual/)
-- [Tmux Cheat Sheet](https://tmuxcheatsheet.com/)
 
 ---
 
