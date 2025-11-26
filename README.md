@@ -60,6 +60,11 @@ This tutorial teaches you how to build a professional automation server with:
 - GitHub integration
 - Collaboration workflows
 
+### [10. Maintenance & Updates](./10-maintenance/README.md)
+- Host system updates
+- N8N container updates
+- Cleanup and optimization
+
 ### [Bonus: Contributing to the Tutorial](./bonus-contributing/README.md)
 - Understanding GitHub Issues
 - Creating effective bug reports and feature requests

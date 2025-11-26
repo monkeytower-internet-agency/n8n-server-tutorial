@@ -1,4 +1,4 @@
-# Chapter 8: Git Repository Setup
+# Chapter 9: Git Repository Setup
 
 **Set up version control for your server configuration and documentation using Git and GitHub. This chapter covers local repository management, remote synchronization, and collaborative workflows for your N8N server infrastructure.**
 
@@ -18,7 +18,7 @@ By the end of this chapter, you'll have:
 - SSH keys configured for GitHub
 - Basic Git knowledge
 
-## 8.1 Local Git Repository
+## 9.1 Local Git Repository
 
 ### Initialize Repository
 
@@ -63,4 +63,6 @@ This repository contains configuration, documentation, and automation scripts fo
 1. Clone this repository
 2. Review documentation in `documentation/`
 3. Run setup scripts in `scripts/`
-4. Check logs in `logs/` for monitoring data
+4. ---
+
+**Next:** [Chapter 10: Maintenance & Updates →](./../10-maintenance/README.md)
