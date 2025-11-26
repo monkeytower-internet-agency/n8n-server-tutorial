@@ -275,6 +275,12 @@ sudo systemctl restart n8n.service
 # Check systemd service logs for errors
 sudo journalctl -u n8n.service -n 50
 
+# Check for crash loops due to permissions
+# Error: SQLITE_READONLY: attempt to write a readonly database
+# Fix: Ensure data directory is owned by the user running the container
+sudo chown -R 1000:1000 ~/.n8n-data
+sudo systemctl restart n8n.service
+
 # Check Podman container status
 podman ps -a
 
