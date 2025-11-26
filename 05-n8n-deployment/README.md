@@ -64,20 +64,34 @@ podman --version
 podman info
 ```
 
-## 4.3 N8N Container Setup
+## 5.3 N8N Container Setup
+
+### Service User Setup (Security Best Practice)
+
+Instead of running containers as your admin user, we'll create a dedicated system user `containers`. This isolates the service and improves security.
+
+**Create the user:**
+```bash
+sudo useradd -m -s /bin/bash containers
+sudo loginctl enable-linger containers
+```
+
+**Create data directory:**
+```bash
+sudo mkdir -p /home/containers/data/n8n
+sudo chown -R containers:containers /home/containers/data
+```
 
 ### Create Quadlet Service
 
-**Modern Podman integration uses Quadlet files instead of manual systemd services.** Quadlet automatically generates proper systemd units with correct dependencies.
-
-**Create Quadlet directory:**
+**Create User Quadlet directory:**
 ```bash
-sudo mkdir -p /etc/containers/systemd
+sudo -u containers mkdir -p /home/containers/.config/containers/systemd
 ```
 
 **Create N8N Quadlet file:**
 ```bash
-sudo nano /etc/containers/systemd/n8n.container
+sudo -u containers nano /home/containers/.config/containers/systemd/n8n.container
 ```
 
 **Add this content:**
@@ -88,8 +102,7 @@ Description=N8N automation server
 [Container]
 Image=docker.io/n8nio/n8n
 PublishPort=5678:5678
-Volume=/home/your-username/.n8n-data:/home/node/.n8n
-User=1000:1000
+Volume=%h/data/n8n:/home/node/.n8n:Z
 
 [Service]
 Restart=always
@@ -99,42 +112,31 @@ TimeoutStartSec=900
 WantedBy=default.target
 ```
 
-**Important:** Replace `/home/your-username/.n8n-data` with the **absolute path** to your data directory (e.g., `/home/ok/.n8n-data`). Using shortcuts like `%h` works for user services but resolves to `/root` for system services, which causes failures.
-
 **Save and exit** (Ctrl+X, Y, Enter)
 
 ### Enable and Start Service
 
-**Reload systemd to recognize the new Quadlet:**
+**Fix Permissions:**
+To ensure the container (UID 1000) can write to the volume, we fix ownership from the container's perspective:
 ```bash
-sudo systemctl daemon-reload
+sudo -u containers bash -c "cd ~ && podman unshare chown -R 1000:1000 /home/containers/data/n8n"
 ```
 
-**Enable auto-start on boot and start immediately:**
+**Start the Service:**
 ```bash
-sudo systemctl enable --now n8n.service
+sudo -u containers bash -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u containers) && systemctl --user daemon-reload && systemctl --user enable --now n8n.service'
 ```
 
-**Check service status:**
+**Check Status:**
 ```bash
-sudo systemctl status n8n.service
+sudo -u containers bash -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u containers) && systemctl --user status n8n.service'
 ```
 
 ### Verify Deployment
 
-**Check if Quadlet service is running:**
-```bash
-sudo systemctl status n8n.service
-```
-
-**View generated systemd logs:**
-```bash
-sudo journalctl -u n8n.service -f
-```
-
 **Check Podman container status:**
 ```bash
-podman ps
+sudo -u containers bash -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u containers) && podman ps'
 ```
 
 ## 4.4 Access N8N
@@ -158,71 +160,74 @@ http://your-server-ip:5678
 - **Password:** (set during setup)
 - **URL:** `http://your-server-ip:5678`
 
-## 4.5 Service Management
+## 5.5 Service Management
 
-### Systemd Commands
+Since we're running as a user service, all commands must be run as the `containers` user.
 
-**Stop N8N service:**
+**Helper Function:**
+Add this alias to your `~/.bashrc` to make management easier:
 ```bash
-sudo systemctl stop n8n.service
+alias n8nctl="sudo -u containers bash -c 'export XDG_RUNTIME_DIR=/run/user/\$(id -u containers) && systemctl --user'"
+```
+Reload bash: `source ~/.bashrc`
+
+### Management Commands
+
+**Stop N8N:**
+```bash
+n8nctl stop n8n.service
 ```
 
-**Start N8N service:**
+**Start N8N:**
 ```bash
-sudo systemctl start n8n.service
+n8nctl start n8n.service
 ```
 
-**Restart N8N service:**
+**Restart N8N:**
 ```bash
-sudo systemctl restart n8n.service
+n8nctl restart n8n.service
 ```
 
-**Check service status:**
+**Check Status:**
 ```bash
-sudo systemctl status n8n.service
+n8nctl status n8n.service
 ```
 
-**View service logs:**
+**View Logs:**
 ```bash
-sudo journalctl -u n8n.service -f
+sudo journalctl --user-unit n8n.service -u containers -f
 ```
 
 **Did I lose my data?**
-When recreating containers (like we just did), you might worry about data loss. Because we use **persistent volumes** (mapped to `~/.n8n-data`), your workflows and credentials are safe. The container is just the "engine" - your data lives in the "fuel tank" (volume) which persists even when the engine is swapped.
-
-See [Container Concepts](https://docs.podman.io/en/latest/Introduction.html) for more details.
+Because we map a **persistent volume** (`/home/containers/data/n8n`), your data is safe even when the container is recreated or updated.
 
 ### Update N8N
 
 **Pull latest image:**
 ```bash
-podman pull docker.io/n8nio/n8n
+sudo -u containers bash -c 'podman pull docker.io/n8nio/n8n'
 ```
 
-**Restart service (Quadlet handles container recreation):**
+**Restart service:**
 ```bash
-sudo systemctl restart n8n.service
+n8nctl restart n8n.service
 ```
 
-**Verify update:**
-```bash
-sudo journalctl -u n8n.service -n 20
-```
-
-## 4.6 Persistent Data Management
+## 5.6 Persistent Data Management
 
 ### Data Location
 
-**N8N stores data in:**
-- `~/.n8n-data/database.sqlite` - Workflow database
-- `~/.n8n-data/.n8n/config` - Configuration files
-- `~/.n8n-data/.n8n/encryption.key` - Encryption keys
+**All N8N data is stored centrally:**
+- **Path:** `/home/containers/data/n8n`
+- **Database:** `database.sqlite`
+- **Config:** `.n8n/config`
+- **Encryption Key:** `.n8n/encryption.key`
 
 ### Backup Strategy
 
 **Manual backup:**
 ```bash
-tar -czf n8n-backup-$(date +%Y%m%d).tar.gz ~/.n8n-data
+sudo tar -czf n8n-backup-$(date +%Y%m%d).tar.gz /home/containers/data/n8n
 ```
 
 **Automated backup covered in later chapters**
@@ -232,17 +237,18 @@ tar -czf n8n-backup-$(date +%Y%m%d).tar.gz ~/.n8n-data
 **Move to new server:**
 ```bash
 # On old server
-tar -czf n8n-data.tar.gz ~/.n8n-data
+sudo tar -czf n8n-data.tar.gz /home/containers/data/n8n
 
 # Transfer to new server
 scp n8n-data.tar.gz new-server:~
 
-# On new server
-tar -xzf n8n-data.tar.gz
-# Deploy N8N with existing data
+# On new server (after creating containers user)
+sudo mkdir -p /home/containers/data
+sudo tar -xzf n8n-data.tar.gz -C /home/containers/data
+sudo chown -R containers:containers /home/containers/data
 ```
 
-## 4.7 Troubleshooting
+## 5.7 Troubleshooting
 
 ### Common Issues
 
@@ -252,63 +258,60 @@ tar -xzf n8n-data.tar.gz
 sudo netstat -tulpn | grep 5678
 
 # Change port in Quadlet file and restart
-sudo nano /etc/containers/systemd/n8n.container
+sudo -u containers nano /home/containers/.config/containers/systemd/n8n.container
 # Change PublishPort=5678:5678 to PublishPort=5679:5678
-sudo systemctl daemon-reload
-sudo systemctl restart n8n.service
+n8nctl restart n8n.service
 ```
 
 **Permission errors:**
 ```bash
 # Fix data directory permissions
-chmod 755 ~/.n8n-data
+sudo chown -R containers:containers /home/containers/data
 
-# Check systemd service logs for permission issues
-sudo journalctl -u n8n.service -n 50
+# Fix volume permissions (container perspective)
+sudo -u containers bash -c "cd ~ && podman unshare chown -R 1000:1000 /home/containers/data/n8n"
 
-# Restart service after fixing permissions
-sudo systemctl restart n8n.service
+# Restart service
+n8nctl restart n8n.service
 ```
 
 **Service won't start:**
 ```bash
 # Check systemd service logs for errors
-sudo journalctl -u n8n.service -n 50
+sudo journalctl --user-unit n8n.service -u containers -n 50
 
 # Check for crash loops due to permissions
-# Error: SQLITE_READONLY: attempt to write a readonly database
-# Fix: Ensure data directory is owned by the user running the container
-sudo chown -R 1000:1000 ~/.n8n-data
-sudo systemctl restart n8n.service
+# Error: SQLITE_READONLY
+# Fix: Run the permission fixes above
 
 # Check Podman container status
-podman ps -a
+sudo -u containers bash -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u containers) && podman ps -a'
 
 # Restart service
-sudo systemctl restart n8n.service
+n8nctl restart n8n.service
 
 # If issues persist, recreate Quadlet
-sudo systemctl stop n8n.service
-sudo systemctl disable n8n.service
-sudo systemctl daemon-reload
-sudo systemctl enable --now n8n.service
+n8nctl stop n8n.service
+sudo -u containers systemctl --user disable n8n.service
+n8nctl daemon-reload
+n8nctl enable --now n8n.service
 ```
 
 ### Performance Monitoring
 
 **Monitor service status:**
 ```bash
-sudo systemctl status n8n.service
+n8nctl status n8n.service
 ```
 
 **Monitor container resource usage:**
 ```bash
-podman stats
+sudo -u containers bash -c 'podman stats'
 ```
 
 **View real-time logs:**
 ```bash
-sudo journalctl -u n8n.service -f
+sudo journalctl --user-unit n8n.service -u containers -f
 ```
 
 **Check system resources:**
@@ -343,27 +346,31 @@ podman run -d \
 - Configure proper user authentication
 - Regular security updates
 
-## 4.9 Deployment Checklist
+## 5.9 Deployment Checklist
+
+### Service User Setup
+- [ ] Dedicated `containers` user created
+- [ ] Linger enabled for user
+- [ ] Data directory created and owned by user
+- [ ] Rootless volume permissions fixed (podman unshare)
 
 ### Quadlet Service Setup
-- [ ] Podman installed and working
-- [ ] Quadlet directory created (/etc/containers/systemd)
+- [ ] User Quadlet directory created
 - [ ] N8N Quadlet file created (n8n.container)
-- [ ] Systemd service enabled and running
+- [ ] User systemd service enabled and running
 - [ ] Port 5678 accessible
-- [ ] Data persistence configured
 
 ### Access & Security
 - [ ] Web interface accessible
 - [ ] Admin account created
 - [ ] Basic authentication configured
-- [ ] Container running as non-root user (%U in Quadlet)
+- [ ] Container running as non-root user (rootless)
 
 ### Service Management
-- [ ] Systemd start/stop/restart commands tested
-- [ ] Service logs accessible (journalctl)
-- [ ] Resource monitoring working
-- [ ] Backup strategy planned
+- [ ] `n8nctl` alias configured
+- [ ] Start/stop/restart commands tested
+- [ ] Service logs accessible
+- [ ] Backup strategy updated for new path
 
 ### Troubleshooting
 - [ ] Common issues identified
